@@ -1,0 +1,83 @@
+.calendar-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+
+  h2 {
+    margin: 0;
+  }
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  grid-auto-rows: minmax(100px, auto);
+
+  .day-header {
+    text-align: center;
+    font-weight: bold;
+    padding: 8px 0;
+    border-bottom: 2px solid #eee;
+  }
+
+  .day-cell {
+    position: relative;
+    min-height: 80px;
+    border: 1px solid #eee;
+    background-color: #f9f9f9;
+    padding: 5px;
+    overflow: auto;
+  }
+
+  .appointment-card {
+    margin-bottom: 4px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    font-size: 0.75rem;
+    padding: 4px;
+    box-sizing: border-box;
+  }
+
+  .appointment-card {
+    margin-bottom: 4px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    font-size: 0.75rem;
+    padding: 4px;
+
+    .appointment-title {
+      font-weight: bold;
+      font-size: 0.85rem;
+    }
+
+    .appointment-date {
+      color: #666;
+      font-size: 0.75rem;
+    }
+
+    mat-icon {
+      font-size: 16px;
+      color: #f44336;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .appointment-card {
+    font-size: 0.7rem;
+    padding: 2px;
+  }
+
+  .day-cell {
+    min-height: 60px;
+  }
+}

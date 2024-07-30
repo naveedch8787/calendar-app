@@ -1,0 +1,45 @@
+<div class="calendar-container">
+  <div class="calendar-grid">
+    <div class="day-header" *ngFor="let day of daysOfWeek">{{ day }}</div>
+
+    <div
+      class="day-cell"
+      *ngFor="let day of daysInMonth"
+      [attr.data-day]="day"
+      (click)="openDialog(day)"
+      (keydown.enter)="openDialog(day)"
+      (keydown.space)="openDialog(day)"
+      tabindex="0"
+      role="button"
+      cdkDropList
+      [cdkDropListData]="appointmentsByDay[day] || []"
+      (cdkDropListDropped)="drop($event, day)"
+      [cdkDropListConnectedTo]="dayContainers"
+      [id]="'day-' + day"
+    >
+      <div class="day-number">{{ day }}</div>
+      <ng-container *ngFor="let appointment of appointmentsByDay[day]">
+        <mat-card cdkDrag class="appointment-card" [cdkDragData]="appointment">
+          <mat-card-content>
+            <div class="appointment-title">{{ appointment.title }}</div>
+            <div class="appointment-date">
+              {{ appointment.date | date : "short" }}
+            </div>
+            <button
+              mat-icon-button
+              (click)="deleteAppointment(appointment.id, $event)"
+              (keydown.enter)="deleteAppointment(appointment.id, $event)"
+              (keydown.space)="deleteAppointment(appointment.id, $event)"
+              aria-label="Delete appointment"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </mat-card-content>
+        </mat-card>
+      </ng-container>
+      <ng-container *ngIf="!appointmentsByDay[day]?.length">
+        <p>No appointments</p>
+      </ng-container>
+    </div>
+  </div>
+</div>

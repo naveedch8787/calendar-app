@@ -5,8 +5,10 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
-import { AppointmentService } from './appointment.service';
+import { AppointmentService, Appointment } from './appointment.service';
 import { AppointmentFormComponent } from './appointment-form/appointment-form.component';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-calendar',
@@ -24,8 +26,8 @@ export class CalendarComponent implements OnInit {
     'Saturday',
   ];
   daysInMonth: number[] = Array.from({ length: 31 }, (_, i) => i + 1);
-  appointmentsByDay: { [key: number]: any[] } = {};
-  dayContainers: string[] = [];
+  appointmentsByDay$: Observable<{ [key: number]: Appointment[] }> = of({});
+  connectedTo: string[] = [];
 
   constructor(
     private appointmentService: AppointmentService,
@@ -33,17 +35,17 @@ export class CalendarComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadAppointments();
-    this.dayContainers = this.daysInMonth.map((day) => `day-${day}`);
+    this.appointmentsByDay$ = this.appointmentService
+      .getAppointments()
+      .pipe(map((appointments) => this.groupAppointmentsByDay(appointments)));
+
+    this.connectedTo = this.daysInMonth.map((day) => `day-${day}`);
   }
 
-  loadAppointments(): void {
-    const appointments = this.appointmentService.getAppointments();
-    this.appointmentsByDay = this.groupAppointmentsByDay(appointments);
-  }
-
-  groupAppointmentsByDay(appointments: any[]): { [key: number]: any[] } {
-    const grouped: { [key: number]: any[] } = {};
+  groupAppointmentsByDay(appointments: Appointment[]): {
+    [key: number]: Appointment[];
+  } {
+    const grouped: { [key: number]: Appointment[] } = {};
     appointments.forEach((appointment) => {
       const day = new Date(appointment.date).getDate();
       if (!grouped[day]) {
@@ -54,20 +56,41 @@ export class CalendarComponent implements OnInit {
     return grouped;
   }
 
-  openDialog(day: number): void {
+  openDialog(day?: number): void {
+    const date = day
+      ? new Date(new Date().setDate(day)).toISOString()
+      : new Date().toISOString();
     const dialogRef = this.dialog.open(AppointmentFormComponent, {
-      data: { date: new Date().setDate(day) },
+      data: { date },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.appointmentService.addAppointment(result);
-        this.loadAppointments();
+        if (result.id) {
+          this.appointmentService.updateAppointment(result);
+        } else {
+          this.appointmentService.addAppointment(result);
+        }
       }
     });
   }
 
-  drop(event: CdkDragDrop<any[]>, day: number): void {
+  openAppointmentDetails(event: Event, appointment: Appointment): void {
+    event.stopPropagation();
+    console.log(appointment);
+    this.dialog
+      .open(AppointmentFormComponent, {
+        data: appointment,
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result) {
+          this.appointmentService.updateAppointment(result);
+        }
+      });
+  }
+
+  drop(event: CdkDragDrop<Appointment[]>, day: number): void {
     if (event.previousContainer === event.container) {
       moveItemInArray(
         event.container.data,
@@ -88,13 +111,25 @@ export class CalendarComponent implements OnInit {
       appointment.date = newDate.toISOString();
 
       this.appointmentService.updateAppointment(appointment);
-      this.loadAppointments();
     }
   }
 
-  deleteAppointment(id: number, event: Event): void {
-    event.stopPropagation();
-    this.appointmentService.deleteAppointment(id);
-    this.loadAppointments();
+  formatTimeToAMPM(time: string): string {
+    const [hour, minute] = time.split(':');
+    const period = +hour >= 12 ? 'PM' : 'AM';
+    const formattedHour = +hour % 12 || 12;
+    return `${this.padZero(formattedHour)}:${minute} ${period}`;
+  }
+
+  padZero(num: number): string {
+    return num < 10 ? `0${num}` : `${num}`;
+  }
+
+  getTooltipText(appointment: Appointment): string {
+    return `Title: ${appointment.title}\nDate: ${new Date(
+      appointment.date
+    ).toLocaleString()}\nTime: ${this.formatTimeToAMPM(
+      appointment.startTime
+    )} - ${this.formatTimeToAMPM(appointment.endTime)}`;
   }
 }

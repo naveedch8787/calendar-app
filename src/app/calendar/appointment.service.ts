@@ -1,39 +1,60 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+
+export interface Appointment {
+  id: number;
+  title: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class AppointmentService {
-  private appointments: any[] = [
-    { id: 1, title: 'Meeting', date: new Date().toISOString() },
-  ];
+  private appointmentsSubject = new BehaviorSubject<Appointment[]>([]);
+  appointments$: Observable<Appointment[]> =
+    this.appointmentsSubject.asObservable();
 
-  getAppointments(): any[] {
-    return this.appointments;
+  constructor() {
+    const initialAppointments: Appointment[] = [];
+    this.appointmentsSubject.next(initialAppointments);
   }
 
-  addAppointment(appointment: any): void {
-    const newAppointment = {
-      ...appointment,
-      id: this.appointments.length
-        ? this.appointments[this.appointments.length - 1].id + 1
-        : 1,
-    };
-    this.appointments.push(newAppointment);
+  getAppointments(): Observable<Appointment[]> {
+    return this.appointments$;
   }
 
-  updateAppointment(updatedAppointment: any): void {
-    const index = this.appointments.findIndex(
+  addAppointment(appointment: Appointment): void {
+    const newId = this.appointmentsSubject.value.length
+      ? Math.max(...this.appointmentsSubject.value.map((a) => a.id)) + 1
+      : 1;
+
+    if (!appointment.id) {
+      appointment.id = newId;
+    }
+
+    const currentAppointments = this.appointmentsSubject.value;
+    this.appointmentsSubject.next([...currentAppointments, appointment]);
+  }
+
+  updateAppointment(updatedAppointment: Appointment): void {
+    const currentAppointments = this.appointmentsSubject.value;
+    const index = currentAppointments.findIndex(
       (app) => app.id === updatedAppointment.id
     );
     if (index !== -1) {
-      this.appointments[index] = updatedAppointment;
+      currentAppointments[index] = updatedAppointment;
+      this.appointmentsSubject.next([...currentAppointments]);
     }
   }
 
   deleteAppointment(id: number): void {
-    this.appointments = this.appointments.filter(
+    const currentAppointments = this.appointmentsSubject.value;
+    const updatedAppointments = currentAppointments.filter(
       (appointment) => appointment.id !== id
     );
+    this.appointmentsSubject.next(updatedAppointments);
   }
 }

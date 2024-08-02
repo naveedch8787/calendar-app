@@ -1,5 +1,7 @@
 <div class="appointment-form-container">
-  <h3>Add New Appointment</h3>
+  <h3>
+    <!--  -->
+  </h3>
   <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()">
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Title</mat-label>
@@ -24,14 +26,40 @@
       </mat-error>
     </mat-form-field>
 
-    <button
-      mat-raised-button
-      color="primary"
-      type="submit"
-      [disabled]="!appointmentForm.valid"
-    >
-      Save
-    </button>
-    <button mat-button type="button" (click)="onCancel()">Cancel</button>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Start Time</mat-label>
+      <input matInput type="time" formControlName="startTime" />
+      <mat-error *ngIf="appointmentForm.get('startTime')?.hasError('required')">
+        Start time is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>End Time</mat-label>
+      <input matInput type="time" formControlName="endTime" />
+      <mat-error *ngIf="appointmentForm.get('endTime')?.hasError('required')">
+        End time is required
+      </mat-error>
+    </mat-form-field>
+
+    <div class="button-container">
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        [disabled]="!appointmentForm.valid"
+      >
+        Save
+      </button>
+      <button
+        mat-raised-button
+        type="button"
+        class="delete-button"
+        (click)="onDelete()"
+        *ngIf="isExistingAppointment()"
+      >
+        Delete
+      </button>
+    </div>
   </form>
 </div>

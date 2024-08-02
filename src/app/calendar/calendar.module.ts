@@ -12,9 +12,16 @@ import { CalendarComponent } from './calendar.component';
 import { AppointmentFormComponent } from './appointment-form/appointment-form.component';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { SmallCalendarComponent } from './small-calendar/small-calendar.component';
+import { MatOptionModule } from '@angular/material/core';
 
 @NgModule({
-  declarations: [CalendarComponent, AppointmentFormComponent],
+  declarations: [
+    CalendarComponent,
+    AppointmentFormComponent,
+    SmallCalendarComponent,
+  ],
   imports: [
     CommonModule,
     FormsModule,
@@ -28,6 +35,8 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatDialogModule,
     CalendarRoutingModule,
     MatCardModule,
+    MatTooltipModule,
+    MatOptionModule,
   ],
 })
 export class CalendarModule {}

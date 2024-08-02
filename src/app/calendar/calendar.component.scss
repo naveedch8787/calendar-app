@@ -1,8 +1,18 @@
 .calendar-container {
+  display: flex;
   max-width: 1000px;
-  margin: 0 auto;
+  // margin: 0 auto;
   padding: 16px;
   box-sizing: border-box;
+}
+
+.small-calendar {
+  flex: 0 0 250px;
+  margin-right: 16px;
+}
+
+.main-content {
+  flex: 1;
 }
 
 .header {
@@ -14,6 +24,17 @@
   h2 {
     margin: 0;
   }
+}
+
+mat-card-content {
+  padding: 2px 4px 2px 4px !important;
+}
+
+.appointment-tooltip {
+  white-space: pre-line;
+  font-size: 0.8rem;
+  max-width: 200px;
+  cursor: pointer;
 }
 
 .calendar-grid {
@@ -31,37 +52,38 @@
 
   .day-cell {
     position: relative;
-    min-height: 80px;
+    min-height: 125px;
     border: 1px solid #eee;
     background-color: #f9f9f9;
     padding: 5px;
     overflow: auto;
+    min-width: 170px;
   }
 
   .appointment-card {
-    margin-bottom: 4px;
-    background-color: #fff;
+    background-color: #8cc9ed;
     border: 1px solid #ddd;
     font-size: 0.75rem;
-    padding: 4px;
     box-sizing: border-box;
-  }
-
-  .appointment-card {
-    margin-bottom: 4px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    font-size: 0.75rem;
-    padding: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    cursor: pointer;
 
     .appointment-title {
       font-weight: bold;
       font-size: 0.85rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .appointment-date {
       color: #666;
       font-size: 0.75rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     mat-icon {

@@ -9,34 +9,34 @@ import { MatIconModule } from '@angular/material/icon';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CalendarRoutingModule } from './calendar-routing.module';
 import { CalendarComponent } from './calendar.component';
-import { AppointmentFormComponent } from './appointment-form/appointment-form.component';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SmallCalendarComponent } from './small-calendar/small-calendar.component';
 import { MatOptionModule } from '@angular/material/core';
+import { MeetingFormComponent } from './meeting-form/meeting-form.component';
 
 @NgModule({
   declarations: [
     CalendarComponent,
-    AppointmentFormComponent,
     SmallCalendarComponent,
+    MeetingFormComponent,
   ],
   imports: [
-    CommonModule,
     FormsModule,
-    ReactiveFormsModule,
+    CommonModule,
+    MatIconModule,
+    MatCardModule,
     MatInputModule,
+    DragDropModule,
+    MatOptionModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatTooltipModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatButtonModule,
-    MatIconModule,
-    DragDropModule,
-    MatDialogModule,
+    ReactiveFormsModule,
     CalendarRoutingModule,
-    MatCardModule,
-    MatTooltipModule,
-    MatOptionModule,
   ],
 })
 export class CalendarModule {}

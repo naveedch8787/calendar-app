@@ -1,12 +1,12 @@
-<div class="appointment-form-container">
+<div class="meeting-form-container">
   <h3>
     <!--  -->
   </h3>
-  <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="meetingForm" (ngSubmit)="onSubmit()">
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Title</mat-label>
       <input matInput placeholder="Title" formControlName="title" />
-      <mat-error *ngIf="appointmentForm.get('title')?.hasError('required')">
+      <mat-error *ngIf="meetingForm.get('title')?.hasError('required')">
         Title is required
       </mat-error>
     </mat-form-field>
@@ -21,7 +21,7 @@
       />
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
-      <mat-error *ngIf="appointmentForm.get('date')?.hasError('required')">
+      <mat-error *ngIf="meetingForm.get('date')?.hasError('required')">
         Date is required
       </mat-error>
     </mat-form-field>
@@ -29,7 +29,7 @@
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Start Time</mat-label>
       <input matInput type="time" formControlName="startTime" />
-      <mat-error *ngIf="appointmentForm.get('startTime')?.hasError('required')">
+      <mat-error *ngIf="meetingForm.get('startTime')?.hasError('required')">
         Start time is required
       </mat-error>
     </mat-form-field>
@@ -37,7 +37,7 @@
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>End Time</mat-label>
       <input matInput type="time" formControlName="endTime" />
-      <mat-error *ngIf="appointmentForm.get('endTime')?.hasError('required')">
+      <mat-error *ngIf="meetingForm.get('endTime')?.hasError('required')">
         End time is required
       </mat-error>
     </mat-form-field>
@@ -47,7 +47,7 @@
         mat-raised-button
         color="primary"
         type="submit"
-        [disabled]="!appointmentForm.valid"
+        [disabled]="!meetingForm.valid"
       >
         Save
       </button>
@@ -56,7 +56,7 @@
         type="button"
         class="delete-button"
         (click)="onDelete()"
-        *ngIf="isExistingAppointment()"
+        *ngIf="isExistingMeeting()"
       >
         Delete
       </button>

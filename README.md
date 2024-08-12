@@ -1,6 +1,6 @@
 # CalendarApp
 
-CalendarApp is an Angular application that allows users to manage appointments and view them in a calendar format. This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.0.2.
+CalendarApp is an Angular application that allows users to manage meeting and view them in a calendar format. This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.0.2.
 
 ## Development server
 

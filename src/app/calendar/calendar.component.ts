@@ -5,7 +5,7 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
-import { Meeting, MeetingService } from './meeting.service';
+import { Meeting, MeetingService } from './service/meeting.service';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { MeetingFormComponent } from './meeting-form/meeting-form.component';
@@ -107,7 +107,7 @@ export class CalendarComponent implements OnInit {
       const newDate = new Date(meeting.date);
       newDate.setDate(day);
       meeting.date = newDate.toISOString();
-      this.meetingService.updateMeetings(meeting)
+      this.meetingService.updateMeetings(meeting);
     }
   }
 

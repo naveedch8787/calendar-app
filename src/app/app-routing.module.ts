@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+// create lazy loading route for calendar module
 const routes: Routes = [
   {
     path: '',

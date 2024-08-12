@@ -30,7 +30,7 @@ mat-card-content {
   padding: 2px 4px 2px 4px !important;
 }
 
-.appointment-tooltip {
+.meeting-tooltip {
   white-space: pre-line;
   font-size: 0.8rem;
   max-width: 200px;
@@ -60,7 +60,7 @@ mat-card-content {
     min-width: 170px;
   }
 
-  .appointment-card {
+  .meeting-card {
     background-color: #8cc9ed;
     border: 1px solid #ddd;
     font-size: 0.75rem;
@@ -70,7 +70,7 @@ mat-card-content {
     word-wrap: break-word;
     cursor: pointer;
 
-    .appointment-title {
+    .meeting-title {
       font-weight: bold;
       font-size: 0.85rem;
       overflow: hidden;
@@ -78,7 +78,7 @@ mat-card-content {
       white-space: nowrap;
     }
 
-    .appointment-date {
+    .meeting-date {
       color: #666;
       font-size: 0.75rem;
       overflow: hidden;
@@ -94,7 +94,7 @@ mat-card-content {
 }
 
 @media (max-width: 600px) {
-  .appointment-card {
+  .meeting-card {
     font-size: 0.7rem;
     padding: 2px;
   }

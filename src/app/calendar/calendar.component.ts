@@ -5,10 +5,10 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
-import { AppointmentService, Appointment } from './appointment.service';
-import { AppointmentFormComponent } from './appointment-form/appointment-form.component';
+import { Meeting, MeetingService } from './meeting.service';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { MeetingFormComponent } from './meeting-form/meeting-form.component';
 
 @Component({
   selector: 'app-calendar',
@@ -16,6 +16,7 @@ import { map } from 'rxjs/operators';
   styleUrls: ['./calendar.component.scss'],
 })
 export class CalendarComponent implements OnInit {
+  connectedTo: string[] = [];
   daysOfWeek: string[] = [
     'Sunday',
     'Monday',
@@ -25,33 +26,31 @@ export class CalendarComponent implements OnInit {
     'Friday',
     'Saturday',
   ];
+  meetingsByDay$: Observable<{ [key: number]: Meeting[] }> = of({});
   daysInMonth: number[] = Array.from({ length: 31 }, (_, i) => i + 1);
-  appointmentsByDay$: Observable<{ [key: number]: Appointment[] }> = of({});
-  connectedTo: string[] = [];
 
   constructor(
-    private appointmentService: AppointmentService,
+    private meetingService: MeetingService,
     private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
-    this.appointmentsByDay$ = this.appointmentService
-      .getAppointments()
-      .pipe(map((appointments) => this.groupAppointmentsByDay(appointments)));
-
+    this.meetingsByDay$ = this.meetingService
+      .getMeetings()
+      .pipe(map((meetings) => this.groupMeetingsByDay(meetings)));
     this.connectedTo = this.daysInMonth.map((day) => `day-${day}`);
   }
 
-  groupAppointmentsByDay(appointments: Appointment[]): {
-    [key: number]: Appointment[];
+  groupMeetingsByDay(meetings: Meeting[]): {
+    [key: number]: Meeting[];
   } {
-    const grouped: { [key: number]: Appointment[] } = {};
-    appointments.forEach((appointment) => {
-      const day = new Date(appointment.date).getDate();
+    const grouped: { [key: number]: Meeting[] } = {};
+    meetings.forEach((meeting) => {
+      const day = new Date(meeting.date).getDate();
       if (!grouped[day]) {
         grouped[day] = [];
       }
-      grouped[day].push(appointment);
+      grouped[day].push(meeting);
     });
     return grouped;
   }
@@ -60,37 +59,36 @@ export class CalendarComponent implements OnInit {
     const date = day
       ? new Date(new Date().setDate(day)).toISOString()
       : new Date().toISOString();
-    const dialogRef = this.dialog.open(AppointmentFormComponent, {
+    const dialogRef = this.dialog.open(MeetingFormComponent, {
       data: { date },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         if (result.id) {
-          this.appointmentService.updateAppointment(result);
+          this.meetingService.updateMeetings(result);
         } else {
-          this.appointmentService.addAppointment(result);
+          this.meetingService.addMeetings(result);
         }
       }
     });
   }
 
-  openAppointmentDetails(event: Event, appointment: Appointment): void {
+  openMeetingDetails(event: Event, meeting: Meeting): void {
     event.stopPropagation();
-    console.log(appointment);
     this.dialog
-      .open(AppointmentFormComponent, {
-        data: appointment,
+      .open(MeetingFormComponent, {
+        data: meeting,
       })
       .afterClosed()
       .subscribe((result) => {
         if (result) {
-          this.appointmentService.updateAppointment(result);
+          this.meetingService.updateMeetings(result);
         }
       });
   }
 
-  drop(event: CdkDragDrop<Appointment[]>, day: number): void {
+  drop(event: CdkDragDrop<Meeting[]>, day: number): void {
     if (event.previousContainer === event.container) {
       moveItemInArray(
         event.container.data,
@@ -105,13 +103,24 @@ export class CalendarComponent implements OnInit {
         event.currentIndex
       );
 
-      const appointment = event.container.data[event.currentIndex];
-      const newDate = new Date(appointment.date);
+      const meeting = event.container.data[event.currentIndex];
+      const newDate = new Date(meeting.date);
       newDate.setDate(day);
-      appointment.date = newDate.toISOString();
-
-      this.appointmentService.updateAppointment(appointment);
+      meeting.date = newDate.toISOString();
+      this.meetingService.updateMeetings(meeting)
     }
+  }
+
+  padZero(num: number): string {
+    return num < 10 ? `0${num}` : `${num}`;
+  }
+
+  getTooltipText(meeting: Meeting): string {
+    return `Title: ${meeting.title}\nDate: ${new Date(
+      meeting.date
+    ).toLocaleString()}\nTime: ${this.formatTimeToAMPM(
+      meeting.startTime
+    )} - ${this.formatTimeToAMPM(meeting.endTime)}`;
   }
 
   formatTimeToAMPM(time: string): string {
@@ -119,17 +128,5 @@ export class CalendarComponent implements OnInit {
     const period = +hour >= 12 ? 'PM' : 'AM';
     const formattedHour = +hour % 12 || 12;
     return `${this.padZero(formattedHour)}:${minute} ${period}`;
-  }
-
-  padZero(num: number): string {
-    return num < 10 ? `0${num}` : `${num}`;
-  }
-
-  getTooltipText(appointment: Appointment): string {
-    return `Title: ${appointment.title}\nDate: ${new Date(
-      appointment.date
-    ).toLocaleString()}\nTime: ${this.formatTimeToAMPM(
-      appointment.startTime
-    )} - ${this.formatTimeToAMPM(appointment.endTime)}`;
   }
 }
